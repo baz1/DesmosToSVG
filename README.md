@@ -1,6 +1,6 @@
 # DesmosToSVG
 
-An SVG export button for www.desmos.com using GreaseMonkey
+An SVG export button for [Desmos](https://www.desmos.com/) using GreaseMonkey
 
 ## Installation
 
@@ -20,6 +20,8 @@ although its content will be that of an SVG file.
 
 This script has only been tested on Mozilla Firefox.
 For other browsers the behavior might be different when downloading the SVG picture.
+
 Please report to me the result of using my script using any other browser not listed above.
+
 Thank you for using DesmosToSVG!
 
