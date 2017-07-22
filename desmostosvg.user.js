@@ -52,7 +52,7 @@ function main() {
     return;
   }
   graph = graph[0];
-  var floaters = document.getElementsByClassName("right-floaters");
+  var floaters = document.getElementsByClassName("align-right-container");
   if (floaters.length != 1) {
     console.log("GM_DesmosSVG: Floaters object not found, or several found.");
     return;
@@ -66,6 +66,7 @@ function main() {
   button.value = "Get SVG";
   spanObj.appendChild(button);
   floaters.appendChild(spanObj);
+  console.log("GM_DesmosSVG: (Info) Button added.");
   graph.myoldGetContext = graph.getContext;
   graph.getContext = myGetContext;
   ctx = new C2S(parseInt(graph.width), parseInt(graph.height));
@@ -75,6 +76,6 @@ function main() {
 }
 
 window.onload = function() {
-  setTimeout(main, 100);
+  setTimeout(main, 3000);
 }
 
