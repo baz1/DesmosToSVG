@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        DesmosToSVG
-// @namespace   https://github.com/baz1/DesmosToSVG
+// @namespace   https://github.com/affogatoman/DesmosToSVG
 // @description Desmos SVG generator
 // @include     https://www.desmos.com/calculator
 // @version     1
@@ -9,6 +9,7 @@
 // ==/UserScript==
 
 /* DesmosToSVG GreaseMonkey script by Remi Bazin */
+/* Re-touched by Affogatoman under the MIT licence*/
 
 var graph, ctx, ctx2, button;
 
@@ -36,7 +37,11 @@ var ctxHandler = {
 };
 
 function getSVG() {
-  window.open("data:image/svg;base64," + btoa(ctx.getSerializedSvg(true)));
+  var nameContainer = document.getElementsByClassName("dcg-variable-title dcg-tooltip dcg-action-savedialog");
+  var link = document.createElement('a');
+  link.download = nameContainer[0].innerHTML + ".svg";
+  link.href = "data:image/svg;base64," + btoa(ctx.getSerializedSvg(true));
+  link.click();
 }
 
 function myGetContext(contextType, contextAttributes) {
