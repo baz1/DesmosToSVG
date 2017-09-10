@@ -5,6 +5,7 @@
 // @include     https://www.desmos.com/calculator
 // @version     1
 // @grant       none
+// @require     https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js
 // @require     https://raw.githubusercontent.com/gliffy/canvas2svg/master/canvas2svg.js
 // ==/UserScript==
 
@@ -80,7 +81,7 @@ function main() {
   cL.ctx = new Proxy({}, ctxHandler);
 }
 
-window.onload = function() {
+$(document).ready(function() {
   setTimeout(main, 3000);
-}
+});
 
