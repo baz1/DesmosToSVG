@@ -3,7 +3,7 @@
 // @namespace   https://github.com/affogatoman/DesmosToSVG
 // @description Desmos SVG generator
 // @include     https://www.desmos.com/calculator
-// @version     2
+// @version     3
 // @grant       none
 // @require     https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js
 // @require     https://raw.githubusercontent.com/gliffy/canvas2svg/master/canvas2svg.js
