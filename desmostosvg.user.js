@@ -3,7 +3,7 @@
 // @namespace   https://github.com/affogatoman/DesmosToSVG
 // @description Desmos SVG generator
 // @include     https://www.desmos.com/calculator
-// @version     1
+// @version     2
 // @grant       none
 // @require     https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js
 // @require     https://raw.githubusercontent.com/gliffy/canvas2svg/master/canvas2svg.js
@@ -39,10 +39,13 @@ var ctxHandler = {
 
 function getSVG() {
   var nameContainer = document.getElementsByClassName("dcg-variable-title dcg-tooltip dcg-action-savedialog");
+  var name = prompt("Enter the file name", nameContainer[0].innerHTML + ".svg");
+  if(name == null || name.equals(""))
+    return;
   var a = document.createElement('a');
   a.setAttribute('href', "data:image/svg;base64," + btoa(ctx.getSerializedSvg(true)));
   a.setAttribute('target', '_blank');
-  a.setAttribute('download', nameContainer[0].innerHTML + ".svg");
+  a.setAttribute('download', name);
   a.style.display = 'none';
   document.body.appendChild(a);
   a.click();
