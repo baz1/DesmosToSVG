@@ -39,10 +39,13 @@ var ctxHandler = {
 
 function getSVG() {
   var nameContainer = document.getElementsByClassName("dcg-variable-title dcg-tooltip dcg-action-savedialog");
-  var link = document.createElement('a');
+  var link = document.createElement("a");
   link.download = nameContainer[0].innerHTML + ".svg";
   link.href = "data:image/svg;base64," + btoa(ctx.getSerializedSvg(true));
+  document.body.appendChild(link);
   link.click();
+  document.body.removeChild(link);
+  delete link;
 }
 
 function myGetContext(contextType, contextAttributes) {
