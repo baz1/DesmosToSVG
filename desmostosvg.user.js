@@ -40,7 +40,7 @@ var ctxHandler = {
 function getSVG() {
   var nameContainer = document.getElementsByClassName("dcg-variable-title dcg-tooltip dcg-action-savedialog");
   var name = prompt("Enter the file name", nameContainer[0].innerHTML + ".svg");
-  if(name == null || name.equals(""))
+  if(name == null || name == "")
     return;
   var a = document.createElement('a');
   a.setAttribute('href', "data:image/svg;base64," + btoa(ctx.getSerializedSvg(true)));
