@@ -1,14 +1,16 @@
 // ==UserScript==
 // @name        DesmosToSVG
-// @namespace   https://github.com/baz1/DesmosToSVG
+// @namespace   https://github.com/affogatoman/DesmosToSVG
 // @description Desmos SVG generator
 // @include     https://www.desmos.com/calculator
-// @version     1
+// @version     3
 // @grant       none
+// @require     https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js
 // @require     https://raw.githubusercontent.com/gliffy/canvas2svg/master/canvas2svg.js
 // ==/UserScript==
 
 /* DesmosToSVG GreaseMonkey script by Remi Bazin */
+/* Re-touched by Affogatoman under the MIT licence*/
 
 var graph, ctx, ctx2, button;
 
@@ -36,7 +38,18 @@ var ctxHandler = {
 };
 
 function getSVG() {
-  window.open("data:image/svg;base64," + btoa(ctx.getSerializedSvg(true)));
+  var nameContainer = document.getElementsByClassName("dcg-variable-title dcg-tooltip dcg-action-savedialog");
+  var name = prompt("Enter the file name", nameContainer[0].innerHTML + ".svg");
+  if(name == null || name == "")
+    return;
+  var a = document.createElement('a');
+  a.setAttribute('href', "data:image/svg;base64," + btoa(ctx.getSerializedSvg(true)));
+  a.setAttribute('target', '_blank');
+  a.setAttribute('download', name);
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
 
 function myGetContext(contextType, contextAttributes) {
@@ -75,7 +88,7 @@ function main() {
   cL.ctx = new Proxy({}, ctxHandler);
 }
 
-window.onload = function() {
+$(document).ready(function() {
   setTimeout(main, 3000);
-}
+});
 
