@@ -2,7 +2,7 @@
 // @name        DesmosToSVG
 // @namespace   https://github.com/baz1/DesmosToSVG
 // @description Desmos SVG generator
-// @include     https://www.desmos.com/calculator
+// @include     https://www.desmos.com/calculator*
 // @version     1
 // @grant       none
 // @require     https://raw.githubusercontent.com/gliffy/canvas2svg/master/canvas2svg.js
