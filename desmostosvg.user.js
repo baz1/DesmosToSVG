@@ -3,79 +3,102 @@
 // @namespace   https://github.com/baz1/DesmosToSVG
 // @description Desmos SVG generator
 // @include     https://www.desmos.com/calculator*
-// @version     1
-// @grant       none
-// @require     https://raw.githubusercontent.com/gliffy/canvas2svg/master/canvas2svg.js
+// @version     3
+// @run-at      document-start
+// @grant       GM_addStyle
 // ==/UserScript==
 
 /* DesmosToSVG GreaseMonkey script by Remi Bazin */
 
-var graph, ctx, ctx2, button;
+function PageScript() {
+  window.DesmosToSVG = new Object();
 
-var ctxHandler = {
-  get: function(target, name) {
-    if (typeof(ctx[name]) == "function") {
-      if (name == "clearRect") {
-        // Note: We assume it is the whole area
-        ctx = new C2S(parseInt(graph.width), parseInt(graph.height));
-        button.disabled = false;
-        return function() { ctx2[name].apply(ctx2, arguments); }
+  DesmosToSVG.ctxHandler = {
+    get: function(target, name) {
+      if (typeof(DesmosToSVG.ctx[name]) == "function") {
+        if (name == "clearRect") {
+          // Note: We assume it is the whole area
+          DesmosToSVG.ctx = new C2S(parseInt(DesmosToSVG.graph.width),
+                                    parseInt(DesmosToSVG.graph.height));
+          DesmosToSVG.button.disabled = false;
+          return function() {
+            DesmosToSVG.ctx2[name].apply(DesmosToSVG.ctx2, arguments);
+          };
+        }
+        return function() {
+          DesmosToSVG.ctx[name].apply(DesmosToSVG.ctx, arguments);
+          DesmosToSVG.ctx2[name].apply(DesmosToSVG.ctx2, arguments);
+        };
+      } else {
+        return DesmosToSVG.ctx2[name];
       }
-      return function() {
-        ctx[name].apply(ctx, arguments);
-        ctx2[name].apply(ctx2, arguments);
-      };
-    } else {
-      return ctx2[name];
+    },
+    set: function(target, name, value) {
+      DesmosToSVG.ctx[name] = value;
+      DesmosToSVG.ctx2[name] = value;
+      return true;
     }
-  },
-  set: function(target, name, value) {
-    ctx[name] = value;
-    ctx2[name] = value;
+  };
+
+  DesmosToSVG.getSVG = function() {
+    window.open("data:image/svg;base64," +
+                btoa(DesmosToSVG.ctx.getSerializedSvg(true)));
+  };
+
+  var myGetContext = function(contextType, contextAttributes) {
+    console.log("GM_DesmosSVG: myGetContext called.");
+    DesmosToSVG.ctx = new C2S(parseInt(DesmosToSVG.graph.width),
+                              parseInt(DesmosToSVG.graph.height));
+    DesmosToSVG.ctx2 = DesmosToSVG.graph.myoldGetContext(
+        contextType, contextAttributes);
+    return new Proxy({}, DesmosToSVG.ctxHandler);
+  };
+
+  var main = function() {
+    DesmosToSVG.graph = document.getElementsByClassName("dcg-graph-inner");
+    if (DesmosToSVG.graph.length != 1) {
+      console.log("GM_DesmosSVG: Graph not found, or several found.");
+      return;
+    }
+    DesmosToSVG.graph = DesmosToSVG.graph[0];
+    var floaters = document.getElementsByClassName("align-right-container");
+    if (floaters.length != 1) {
+      console.log("GM_DesmosSVG: Floaters object not found, or several found.");
+      return;
+    }
+    floaters = floaters[0];
+    var spanObj = document.createElement("SPAN");
+    DesmosToSVG.button = document.createElement("INPUT");
+    DesmosToSVG.button.type = "button";
+    DesmosToSVG.button.disabled = true;
+    DesmosToSVG.button.addEventListener("click", DesmosToSVG.getSVG, false);
+    DesmosToSVG.button.value = "Get SVG";
+    spanObj.appendChild(DesmosToSVG.button);
+    floaters.appendChild(spanObj);
+    console.log("GM_DesmosSVG: (Info) Button added.");
+    DesmosToSVG.graph.myoldGetContext = DesmosToSVG.graph.getContext;
+    DesmosToSVG.graph.getContext = myGetContext;
+    DesmosToSVG.ctx = new C2S(parseInt(DesmosToSVG.graph.width),
+                              parseInt(DesmosToSVG.graph.height));
+    var cL = window.tourController.Calc.grapher.canvasLayer;
+    DesmosToSVG.ctx2 = cL.ctx;
+    cL.ctx = new Proxy({}, DesmosToSVG.ctxHandler);
   }
-};
 
-function getSVG() {
-  window.open("data:image/svg;base64," + btoa(ctx.getSerializedSvg(true)));
-}
-
-function myGetContext(contextType, contextAttributes) {
-  ctx = new C2S(parseInt(graph.width), parseInt(graph.height));
-  ctx2 = graph.myoldGetContext(contextType, contextAttributes);
-  return new Proxy({}, ctxHandler);
-}
-
-function main() {
-  graph = document.getElementsByClassName("dcg-graph-inner");
-  if (graph.length != 1) {
-    console.log("GM_DesmosSVG: Graph not found, or several found.");
-    return;
-  }
-  graph = graph[0];
-  var floaters = document.getElementsByClassName("align-right-container");
-  if (floaters.length != 1) {
-    console.log("GM_DesmosSVG: Floaters object not found, or several found.");
-    return;
-  }
-  floaters = floaters[0];
-  var spanObj = document.createElement("SPAN");
-  button = document.createElement("INPUT");
-  button.type = "button";
-  button.disabled = true;
-  button.addEventListener("click", getSVG, false);
-  button.value = "Get SVG";
-  spanObj.appendChild(button);
-  floaters.appendChild(spanObj);
-  console.log("GM_DesmosSVG: (Info) Button added.");
-  graph.myoldGetContext = graph.getContext;
-  graph.getContext = myGetContext;
-  ctx = new C2S(parseInt(graph.width), parseInt(graph.height));
-  var cL = window.tourController.Calc.grapher.canvasLayer;
-  ctx2 = cL.ctx;
-  cL.ctx = new Proxy({}, ctxHandler);
-}
-
-window.onload = function() {
   setTimeout(main, 3000);
 }
 
+function AddJSNode(fn, url) {
+  var scriptNode = document.createElement("script");
+  scriptNode.type = "text/javascript";
+  if (fn) scriptNode.textContent = "(" + fn.toString() + ")();";
+  if (url) scriptNode.src = url;
+  var target = document.getElementsByTagName ('head')[0] ||
+      document.body || document.documentElement;
+  target.appendChild(scriptNode);
+}
+
+window.addEventListener("DOMContentLoaded", function() {
+  AddJSNode(null, "https://cdn.rawgit.com/gliffy/canvas2svg/master/canvas2svg.js");
+  AddJSNode(PageScript, null);
+}, false);
