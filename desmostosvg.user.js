@@ -3,7 +3,7 @@
 // @namespace   https://github.com/baz1/DesmosToSVG
 // @description Desmos SVG generator
 // @include     https://www.desmos.com/calculator
-// @version     2
+// @version     3
 // @run-at      document-start
 // @grant       GM_addStyle
 // ==/UserScript==
@@ -36,6 +36,7 @@ function PageScript() {
     set: function(target, name, value) {
       DesmosToSVG.ctx[name] = value;
       DesmosToSVG.ctx2[name] = value;
+      return true;
     }
   };
 
